@@ -11,6 +11,11 @@ on:
 jobs:
   daily_commit:
     runs-on: ubuntu-latest
+    # 👇 ADD THIS PERMISSIONS BLOCK
+    permissions:
+      contents: write # Grant 'write' permission for contents
+      # Optional: Add pull-requests: write if your action interacts with PRs
+    # 👆 END OF PERMISSIONS BLOCK
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
