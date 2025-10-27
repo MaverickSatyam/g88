@@ -1,0 +1,38 @@
+name: Daily Scheduled Commit
+
+on:
+  schedule:
+    # Runs at 02:30 AM UTC every day
+    # You must choose specific hours/minutes instead of wildcards as per the requirement.
+    - cron: '30 02 * * *'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  daily_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git with 23f3003273@ds.study.iitm.ac.in
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          # This step name includes the required email address
+          echo "Workflow run on $(date)" > DAILY_RUN.txt
+
+      - name: Add and Commit Daily Change
+        run: |
+          # Create a file with the current date/time as content
+          echo "Last run: $(date)" > daily_log.txt
+          # Add the file to the staging area
+          git add daily_log.txt
+          # Commit the change
+          git commit -m "Automated daily commit: $(date)" || echo "No changes to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
